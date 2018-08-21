@@ -92,7 +92,7 @@ const assert = require('chai').assert;
 
       gql.disableExperimentalFragmentVariables()
     });
-    
+
     // see https://github.com/apollographql/graphql-tag/issues/168
     it('does not nest queries needlessly in named exports', () => {
       const jsSource = loader.call({ cacheable() {} }, `
@@ -435,6 +435,28 @@ const assert = require('chai').assert;
         assert(fragments.some(fragment => fragment.name.value === 'friends'))
         assert(fragments.some(fragment => fragment.name.value === 'enemies'))
         assert(fragments.some(fragment => fragment.name.value === 'person'))
+      });
+    });
+
+    describe('named queries with params returning simple types', () => {
+      it('query can be parsed', () => {
+        const query = gql`
+          query name($param: String!) {
+            something(param: $param): Boolean
+          }
+        `;
+
+        assert.equal(query.kind, 'Document');
+      });
+
+      it('mutation can be parsed', () => {
+        const mutation = gql`
+          mutation name($param: String!) {
+            something(param: $param): Boolean
+          }
+        `;
+
+        assert.equal(mutation.kind, 'Document');
       });
     });
 
